@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MediMind — AI Health Assistant</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+<div class="splash" id="splash">
+  <div class="splash-inner">
+    <div class="splash-logo"><i class="fa-solid fa-heart-pulse"></i></div>
+    <div class="splash-name">MediMind</div>
+    <div class="splash-sub">AI Health Assistant</div>
+    <div class="splash-bar"><div class="splash-fill"></div></div>
+  </div>
+</div>
+
+<!-- NOTIFICATION POPUP -->
+<div class="notif-popup" id="notifPopup">
+  <div class="notif-icon"><i class="fa-solid fa-bell"></i></div>
+  <div class="notif-content">
+    <div class="notif-title" id="notifTitle">Medication Reminder</div>
+    <div class="notif-msg" id="notifMsg">Time to take your medication!</div>
+  </div>
+  <button class="notif-close" onclick="closeNotif()"><i class="fa-solid fa-xmark"></i></button>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2><i class="fa-solid fa-pen"></i> Edit Medication</h2>
+      <button class="modal-close" onclick="closeEditModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="form-grid">
+      <input type="hidden" id="editId" />
+      <div class="form-group full">
+        <label>Medication Name *</label>
+        <input type="text" id="editName" placeholder="e.g. Paracetamol 500mg" />
+      </div>
+      <div class="form-group">
+        <label>Dosage *</label>
+        <input type="text" id="editDose" placeholder="e.g. 1 tablet" />
+      </div>
+      <div class="form-group">
+        <label>Frequency *</label>
+        <select id="editFreq">
+          <option value="once">Once daily</option>
+          <option value="twice">Twice daily</option>
+          <option value="thrice">Three times daily</option>
+          <option value="weekly">Weekly</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Time *</label>
+        <input type="time" id="editTime" />
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select id="editCategory">
+          <option value="General">General</option>
+          <option value="Heart">Heart</option>
+          <option value="Diabetes">Diabetes</option>
+          <option value="Blood Pressure">Blood Pressure</option>
+          <option value="Vitamins">Vitamins & Supplements</option>
+          <option value="Pain Relief">Pain Relief</option>
+          <option value="Antibiotic">Antibiotic</option>
+          <option value="Mental Health">Mental Health</option>
+          <option value="Thyroid">Thyroid</option>
+          <option value="Eye Drops">Eye Drops</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>With Food?</label>
+        <select id="editFood">
+          <option value="after">After meal</option>
+          <option value="before">Before meal</option>
+          <option value="any">Doesn't matter</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Notes (optional)</label>
+        <input type="text" id="editNotes" placeholder="e.g. Take with a full glass of water" />
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="saveEdit()"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+      <button class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <div class="logo-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+      <span class="logo-text">MediMind</span>
+    </div>
+    <button class="sidebar-close" id="sidebarClose"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <nav class="sidebar-nav">
+    <button class="nav-btn active" data-tab="dashboard"><i class="fa-solid fa-house-medical"></i> Dashboard</button>
+    <button class="nav-btn" data-tab="medications"><i class="fa-solid fa-pills"></i> My Medications</button>
+    <button class="nav-btn" data-tab="add-med"><i class="fa-solid fa-circle-plus"></i> Add Medication</button>
+    <button class="nav-btn" data-tab="assistant"><i class="fa-solid fa-robot"></i> AI Assistant</button>
+    <button class="nav-btn" data-tab="insights"><i class="fa-solid fa-chart-line"></i> Health Insights</button>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+      <i class="fa-solid fa-moon" id="themeIcon"></i>
+      <span id="themeLabel">Dark Mode</span>
+    </button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main-wrapper" id="mainWrapper">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <button class="menu-btn" id="menuBtn"><i class="fa-solid fa-bars"></i></button>
+    <div class="topbar-title" id="topbarTitle">Dashboard</div>
+    <div class="topbar-right">
+      <div class="date-display" id="dateDisplay"></div>
+      <div class="avatar">D</div>
+    </div>
+  </header>
+
+  <!-- CONTENT AREA -->
+  <main class="content">
+
+    <!-- ═══ DASHBOARD TAB ═══ -->
+    <section class="tab active" id="tab-dashboard">
+      <div class="section-heading">
+        <h1 id="greetingText">Good morning 👋</h1>
+        <p id="greetingDate">Here's your health summary for today.</p>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card green">
+          <div class="stat-icon"><i class="fa-solid fa-pills"></i></div>
+          <div class="stat-info">
+            <div class="stat-num" id="statTotal">0</div>
+            <div class="stat-label">Total Medications</div>
+          </div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+          <div class="stat-info">
+            <div class="stat-num" id="statTaken">0</div>
+            <div class="stat-label">Taken Today</div>
+          </div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <div class="stat-info">
+            <div class="stat-num" id="statMissed">0</div>
+            <div class="stat-label">Missed Today</div>
+          </div>
+        </div>
+        <div class="stat-card purple">
+          <div class="stat-icon"><i class="fa-solid fa-fire"></i></div>
+          <div class="stat-info">
+            <div class="stat-num" id="statStreak">0</div>
+            <div class="stat-label">Day Streak</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today's Schedule -->
+      <div class="card">
+        <div class="card-header">
+          <h2><i class="fa-solid fa-clock"></i> Today's Schedule</h2>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span class="badge" id="scheduleCount">0 doses</span>
+            <button class="btn-mark-all" id="markAllBtn" onclick="markAllTaken()"><i class="fa-solid fa-check-double"></i> Mark All Taken</button>
+          </div>
+        </div>
+        <div class="schedule-list" id="scheduleList">
+          <div class="empty-state">
+            <i class="fa-solid fa-calendar-plus"></i>
+            <p>No medications added yet.<br>Go to <strong>Add Medication</strong> to get started!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Tip -->
+      <div class="card ai-tip-card">
+        <div class="card-header">
+          <h2><i class="fa-solid fa-lightbulb"></i> AI Health Tip</h2>
+        </div>
+        <div class="ai-tip-body">
+          <div class="tip-avatar"><i class="fa-solid fa-robot"></i></div>
+          <div class="tip-text" id="tipText">Loading your personalized tip...</div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn-secondary" onclick="refreshTip()"><i class="fa-solid fa-rotate-right"></i> New Tip</button>
+          <button class="btn-secondary" onclick="printSchedule()"><i class="fa-solid fa-print"></i> Print Schedule</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ MEDICATIONS TAB ═══ -->
+    <section class="tab" id="tab-medications">
+      <div class="section-heading">
+        <h1>My Medications</h1>
+        <p>Track and manage all your medications in one place.</p>
+      </div>
+      <!-- Search bar -->
+      <div class="search-bar-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="medSearch" placeholder="Search by name or category..." oninput="renderMedList()" />
+        <select id="catFilter" onchange="renderMedList()">
+          <option value="">All Categories</option>
+          <option value="General">General</option>
+          <option value="Heart">Heart</option>
+          <option value="Diabetes">Diabetes</option>
+          <option value="Blood Pressure">Blood Pressure</option>
+          <option value="Vitamins">Vitamins</option>
+          <option value="Pain Relief">Pain Relief</option>
+          <option value="Antibiotic">Antibiotic</option>
+          <option value="Mental Health">Mental Health</option>
+          <option value="Thyroid">Thyroid</option>
+          <option value="Eye Drops">Eye Drops</option>
+        </select>
+      </div>
+      <div class="med-list" id="medList">
+        <div class="empty-state">
+          <i class="fa-solid fa-prescription-bottle-medical"></i>
+          <p>No medications added yet.<br>Click <strong>Add Medication</strong> to begin.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ ADD MEDICATION TAB ═══ -->
+    <section class="tab" id="tab-add-med">
+      <div class="section-heading">
+        <h1>Add Medication</h1>
+        <p>Fill in the details of your medication below.</p>
+      </div>
+      <div class="card form-card">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Medication Name *</label>
+            <input type="text" id="medName" placeholder="e.g. Paracetamol 500mg" />
+          </div>
+          <div class="form-group">
+            <label>Dosage *</label>
+            <input type="text" id="medDose" placeholder="e.g. 1 tablet" />
+          </div>
+          <div class="form-group">
+            <label>Frequency *</label>
+            <select id="medFreq">
+              <option value="once">Once daily</option>
+              <option value="twice">Twice daily</option>
+              <option value="thrice">Three times daily</option>
+              <option value="weekly">Weekly</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Time(s) *</label>
+            <input type="time" id="medTime1" />
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select id="medCategory">
+              <option value="General">General</option>
+              <option value="Heart">Heart</option>
+              <option value="Diabetes">Diabetes</option>
+              <option value="Blood Pressure">Blood Pressure</option>
+              <option value="Vitamins">Vitamins & Supplements</option>
+              <option value="Pain Relief">Pain Relief</option>
+              <option value="Antibiotic">Antibiotic</option>
+              <option value="Mental Health">Mental Health</option>
+              <option value="Thyroid">Thyroid</option>
+              <option value="Eye Drops">Eye Drops</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>With Food?</label>
+            <select id="medFood">
+              <option value="after">After meal</option>
+              <option value="before">Before meal</option>
+              <option value="any">Doesn't matter</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label>Notes (optional)</label>
+            <input type="text" id="medNotes" placeholder="e.g. Take with a full glass of water" />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-primary" onclick="addMedication()"><i class="fa-solid fa-circle-plus"></i> Add Medication</button>
+          <button class="btn-secondary" onclick="clearForm()"><i class="fa-solid fa-rotate-left"></i> Clear</button>
+        </div>
+        <div class="form-msg" id="formMsg"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2><i class="fa-solid fa-star"></i> Quick Add (Common Medications)</h2></div>
+        <div class="quick-add-grid" id="quickAddGrid"></div>
+      </div>
+    </section>
+
+    <!-- ═══ AI ASSISTANT TAB ═══ -->
+    <section class="tab" id="tab-assistant">
+      <div class="section-heading">
+        <h1>AI Health Assistant</h1>
+        <p>Ask anything about your medications, symptoms, or health habits.</p>
+      </div>
+      <div class="chat-container">
+        <div class="chat-topbar">
+          <span><i class="fa-solid fa-circle" style="color:var(--green);font-size:9px;"></i> MediMind AI — Online</span>
+          <button class="btn-clear-chat" onclick="clearChat()"><i class="fa-solid fa-trash"></i> Clear Chat</button>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="quick-replies" id="quickReplies">
+          <button onclick="sendQuick('What are common side effects of painkillers?')">💊 Painkiller side effects</button>
+          <button onclick="sendQuick('How to build a medication habit?')">📅 Build med habit</button>
+          <button onclick="sendQuick('What to do if I miss a dose?')">⚠️ Missed a dose?</button>
+          <button onclick="sendQuick('Tips for better sleep?')">😴 Sleep tips</button>
+          <button onclick="sendQuick('How much water should I drink daily?')">💧 Water intake</button>
+          <button onclick="sendQuick('What foods should I avoid with medicines?')">🥗 Food & meds</button>
+          <button onclick="sendQuick('Tell me about fever and cold remedies')">🤒 Fever & cold</button>
+          <button onclick="sendQuick('Thyroid medication tips')">🦋 Thyroid tips</button>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chatInput" placeholder="Ask a health question..." onkeydown="if(event.key==='Enter') sendMessage()" />
+          <button class="send-btn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ INSIGHTS TAB ═══ -->
+    <section class="tab" id="tab-insights">
+      <div class="section-heading">
+        <h1>Health Insights</h1>
+        <p>Understand your medication adherence patterns.</p>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card green">
+          <div class="stat-icon"><i class="fa-solid fa-percent"></i></div>
+          <div class="stat-info">
+            <div class="stat-num" id="adherenceRate">0%</div>
+            <div class="stat-label">Today's Adherence</div>
+          </div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-icon"><i class="fa-solid fa-trophy"></i></div>
+          <div class="stat-info">
+            <div class="stat-num" id="bestStreak">0</div>
+            <div class="stat-label">Current Streak</div>
+          </div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-icon"><i class="fa-solid fa-calendar-xmark"></i></div>
+          <div class="stat-info">
+            <div class="stat-num" id="totalMissed">0</div>
+            <div class="stat-label">Missed This Week</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- View toggle -->
+      <div class="view-toggle">
+        <button class="vt-btn active" id="btnWeekly" onclick="switchView('weekly')">Weekly</button>
+        <button class="vt-btn" id="btnMonthly" onclick="switchView('monthly')">Monthly</button>
+      </div>
+
+      <!-- Weekly chart -->
+      <div class="card" id="weeklyView">
+        <div class="card-header"><h2><i class="fa-solid fa-chart-bar"></i> Weekly Adherence</h2></div>
+        <div class="week-chart" id="weekChart"></div>
+        <div class="chart-legend">
+          <span><span class="legend-dot green"></span> All taken</span>
+          <span><span class="legend-dot orange"></span> Partial</span>
+          <span><span class="legend-dot grey"></span> None</span>
+        </div>
+      </div>
+
+      <!-- Monthly chart -->
+      <div class="card" id="monthlyView" style="display:none">
+        <div class="card-header"><h2><i class="fa-solid fa-calendar"></i> Monthly Adherence</h2></div>
+        <div class="month-grid" id="monthGrid"></div>
+      </div>
+
+      <!-- Missed history -->
+      <div class="card">
+        <div class="card-header"><h2><i class="fa-solid fa-clock-rotate-left"></i> Missed Medication History</h2></div>
+        <div id="missedHistory">
+          <div class="empty-state"><i class="fa-solid fa-check-circle"></i><p>No missed medications recorded!</p></div>
+        </div>
+      </div>
+
+      <!-- Category breakdown -->
+      <div class="card">
+        <div class="card-header"><h2><i class="fa-solid fa-list-check"></i> Medication Categories</h2></div>
+        <div class="category-list" id="categoryList">
+          <div class="empty-state"><i class="fa-solid fa-chart-pie"></i><p>Add medications to see insights.</p></div>
+        </div>
+      </div>
+
+      <!-- AI Insight -->
+      <div class="card ai-tip-card">
+        <div class="card-header"><h2><i class="fa-solid fa-brain"></i> AI Insight</h2></div>
+        <div class="ai-tip-body">
+          <div class="tip-avatar"><i class="fa-solid fa-robot"></i></div>
+          <div class="tip-text" id="insightText">Add medications and mark doses to get personalized insights.</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- PRINT AREA -->
+<div id="printArea" style="display:none"></div>
+
+<script src="bot.js"></script>
+</body>
+</html>
