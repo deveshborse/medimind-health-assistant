@@ -1,21 +1,13 @@
 # 💊 MediMind — AI Health Assistant
 
-> **SDG 3: Good Health & Well-being**  
+Good Health & Well-being
 > An AI-powered medication tracker and health assistant built with HTML, CSS & JavaScript.
-
-![MediMind Banner](https://img.shields.io/badge/MediMind-AI%20Health%20Assistant-00d68f?style=for-the-badge&logo=heart&logoColor=white)
-![SDG 3](https://img.shields.io/badge/SDG%203-Good%20Health%20%26%20Well--being-4CAF50?style=for-the-badge)
-![HTML](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
-![CSS](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
 ---
 
 ## 🌐 Live Demo
 
-🔗 **[https://yourusername.github.io/medimind-health-assistant/](https://yourusername.github.io/medimind-health-assistant/)**
-
-> *(Replace `yourusername` with your actual GitHub username)*
+🔗(https://deveshborse.github.io/medimind-health-assistant/)**
 
 ---
 
@@ -24,15 +16,6 @@
 Millions of people — especially elderly patients and those with chronic conditions — miss their medications daily due to forgetfulness, lack of tracking, and poor health awareness. According to WHO, medication non-adherence causes **125,000 deaths annually** and accounts for **10–25% of hospitalizations**.
 
 **MediMind** solves this by providing a free, always-available AI-powered health assistant that tracks medications, sends reminders, and answers health questions — right in the browser.
-
----
-
-## 🎯 SDG Alignment
-
-**SDG Goal 3 — Good Health & Well-being**  
-Target 3.8: Achieve universal health coverage and access to quality healthcare.
-
-MediMind addresses the gap in affordable, accessible health management tools for individuals who cannot afford personal healthcare assistants or smart devices.
 
 ---
 
@@ -117,76 +100,6 @@ medimind-health-assistant/
 
 ---
 
-## 🚀 How to Run Locally
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/medimind-health-assistant.git
-   ```
-
-2. **Open the project folder**
-   ```bash
-   cd medimind-health-assistant
-   ```
-
-3. **Open `index.html` in your browser**
-   ```bash
-   # Just double-click index.html
-   # Or use VS Code Live Server extension
-   ```
-
-No installation or setup required. Works entirely in the browser.
-
----
-
-## 📱 How to Deploy on GitHub Pages
-
-1. Push all files to a **public** GitHub repository
-2. Go to **Settings → Pages**
-3. Set Source to **Deploy from branch → main → / (root)**
-4. Click **Save**
-5. Your live link will be: `https://yourusername.github.io/repo-name/`
-
----
-
-## 🤖 How the AI Works
-
-MediMind uses a **keyword-based intent matching system** — no external AI API required.
-
-```
-User Input
-    ↓
-Convert to lowercase
-    ↓
-Loop through Knowledge Base (16 topics)
-    ↓
-Check if any keyword matches input
-    ↓
-Match found? → Return topic response + suggestions
-No match?   → Return fallback message
-```
-
-The Knowledge Base covers 16 health topics with medically accurate information. Responses are also personalized based on the user's added medications — if you've added Metformin, the bot gives diabetes-specific tips automatically.
-
----
-
-## 💾 Data Storage
-
-All data is stored **locally in the browser** using `localStorage`:
-
-| Key | Data |
-|-----|------|
-| `medimind_meds` | All medications |
-| `medimind_taken_YYYY-MM-DD` | Doses taken per day |
-| `medimind_streak` | Current streak count |
-| `medimind_chat` | Chat history |
-| `medimind_records` | Daily adherence records |
-| `medimind_theme` | Dark/light preference |
-
-No data is sent to any server. Completely private and offline-capable.
-
----
-
 ## 🔮 Future Scope
 
 - **Voice input** using Web Speech API for hands-free interaction
@@ -198,30 +111,7 @@ No data is sent to any server. Completely private and offline-capable.
 - **Analytics dashboard** for doctors to monitor patient adherence
 - **Mobile app** (React Native) for push notifications
 
----
 
-## 👨‍💻 Author
-
-**Devesh Borse**  
-GitHub: [@deveshborse](https://github.com/deveshborse)
-
----
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
----
-
-## 🙏 Acknowledgements
-
-- [Font Awesome](https://fontawesome.com) — Icons
-- [Google Fonts](https://fonts.google.com) — Inter & Sora typefaces
-- [GitHub Pages](https://pages.github.com) — Free hosting
-- [WHO](https://www.who.int) — Health data and medication adherence statistics
-- **Lenovo & BharatCares** — Capstone Project Assignment
-
----
 
 <div align="center">
   <strong>Built with ❤️ for SDG 3 — Good Health & Well-being</strong><br>
