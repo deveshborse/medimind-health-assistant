@@ -113,7 +113,3 @@ medimind-health-assistant/
 
 
 
-<div align="center">
-  <strong>Built with ❤️ for SDG 3 — Good Health & Well-being</strong><br>
-  <em>MediMind AI Health Assistant — Capstone Project</em>
-</div>
